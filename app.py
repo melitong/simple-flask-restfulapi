@@ -2,6 +2,7 @@
 # using flask_restful
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
+import logging
 
 # creating the flask app
 app = Flask(__name__)
@@ -47,8 +48,11 @@ api.add_resource(Hello, '/')
 api.add_resource(Square, '/square/<int:num>')
 api.add_resource(Sum, '/add/<int:num1>,<int:num2>')
   
-  
 # driver function
 if __name__ == '__main__':
   
     app.run(debug = True)
+    if app.config['LOG_WITH_GUNICORN']:
+        gunicorn_error_logger = logging.getLogger('gunicorn.error')
+        app.logger.handlers.extend(gunicorn_error_logger.handlers)
+        app.logger.setLevel(logging.DEBUG)
